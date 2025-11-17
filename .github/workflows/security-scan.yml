@@ -1,0 +1,33 @@
+name: Security Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Scan filesystem with Trivy
+      - name: Scan dependencies with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs           # Scan the filesystem
+          format: table           # Output format
+          output: trivy-report.txt  # Save report as text file
+
+      # Step 3: Upload report as artifact
+      - name: Upload Trivy report
+        uses: actions/upload-artifact@v3
+        with:
+          name: trivy-report
+          path: trivy-report.txt
